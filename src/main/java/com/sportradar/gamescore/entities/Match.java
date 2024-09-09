@@ -1,6 +1,8 @@
 package com.sportradar.gamescore.entities;
 
-public class Match {
+import java.time.LocalDateTime;
+
+public class Match implements Comparable<Match>{
 
     private String id;
     private String teamA;
@@ -11,11 +13,14 @@ public class Match {
 
     private int scoreB;
 
+    private LocalDateTime startedDate;
+
 
     public Match(String teamA, String teamB) {
         this.teamA = teamA;
         this.teamB = teamB;
         this.id = teamA + "-"+ teamB;
+        startedDate = LocalDateTime.now();
     }
 
     public String getId() {
@@ -61,13 +66,36 @@ public class Match {
         this.scoreB = scoreB;
     }
 
+    public LocalDateTime getStartedDate() {
+        return startedDate;
+    }
+
+    public void setStartedDate(LocalDateTime startedDate) {
+        this.startedDate = startedDate;
+    }
+
     @Override
     public String toString() {
         return "Match{" +
-                "teamA='" + teamA + '\'' +
+                "id='" + id + '\'' +
+                ", teamA='" + teamA + '\'' +
                 ", teamB='" + teamB + '\'' +
                 ", scoreA=" + scoreA +
                 ", scoreB=" + scoreB +
+                ", startedDate=" + startedDate +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(Match o) {
+        //larger score means match with higher priority
+        //if score is equal, most recently started match with higher priority
+
+        int compareScore = Integer.compare((this.scoreA+this.scoreB), (o.scoreA+o.scoreB));
+
+        int compareDateStarted = this.startedDate.compareTo(o.getStartedDate());
+
+        return (compareScore == 0) ? compareDateStarted : compareScore;
     }
 }

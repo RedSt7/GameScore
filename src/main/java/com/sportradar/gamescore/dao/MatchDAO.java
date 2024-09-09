@@ -31,16 +31,17 @@ public class MatchDAO {
         return matchDAO;
     }
 
-    public void add(Match match){
+    public synchronized void add(Match match){
         logger.info("adding match : "+match);
         hashMap.put(match.getId(), match);
         int score = match.getScoreA() + match.getScoreB();
 
         List<Match> scoreList = scoreBoard.computeIfAbsent(score, k -> new ArrayList<>());
         scoreList.add(match);
+        Collections.reverse(scoreList);
     }
 
-    public void remove(String id){
+    public synchronized void remove(String id){
         logger.info("removing match with id : "+id);
         Match match = hashMap.get(id);
         hashMap.remove(id);
@@ -50,7 +51,7 @@ public class MatchDAO {
     }
 
 
-    public void update(String id, int scoreA, int scoreB){
+    public synchronized void update(String id, int scoreA, int scoreB){
         Match match = hashMap.get(id);
 
         int previousScore = match.getScoreA() + match.getScoreB();
@@ -64,6 +65,7 @@ public class MatchDAO {
 
         List<Match> scoreList = scoreBoard.computeIfAbsent(newScore, k -> new ArrayList<>());
         scoreList.add(match);
+        Collections.reverse(scoreList);
 
     }
 
@@ -75,7 +77,7 @@ public class MatchDAO {
         return new ArrayList<>(hashMap.values());
     }
 
-    public void removeAll(){
+    public synchronized void removeAll(){
         hashMap.clear();
         scoreBoard.clear();
     }
