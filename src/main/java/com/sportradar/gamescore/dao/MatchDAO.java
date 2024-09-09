@@ -1,6 +1,6 @@
-package com.sportradar.gamescore.gamescore.dao;
+package com.sportradar.gamescore.dao;
 
-import com.sportradar.gamescore.gamescore.entities.Match;
+import com.sportradar.gamescore.entities.Match;
 
 import java.util.*;
 
@@ -42,7 +42,33 @@ public class MatchDAO {
 
     public void remove(String id){
         logger.info("removing match with id : "+id);
+        Match match = hashMap.get(id);
         hashMap.remove(id);
+
+        int score = match.getScoreA() + match.getScoreB();
+        scoreBoard.get(score).remove(match);
+    }
+
+
+    public void update(String id, int scoreA, int scoreB){
+        Match match = hashMap.get(id);
+
+        int previousScore = match.getScoreA() + match.getScoreB();
+
+        match.setScoreA(scoreA);
+        match.setScoreB(scoreB);
+
+        int newScore = match.getScoreA() + match.getScoreB();
+
+        scoreBoard.get(previousScore).remove(match);
+
+        List<Match> scoreList = scoreBoard.computeIfAbsent(newScore, k -> new ArrayList<>());
+        scoreList.add(match);
+
+    }
+
+    public Match findByID(String id){
+        return hashMap.get(id);
     }
 
     public List<Match> findAll(){
@@ -51,6 +77,7 @@ public class MatchDAO {
 
     public void removeAll(){
         hashMap.clear();
+        scoreBoard.clear();
     }
 
     public List<Match> findAllSorted(){

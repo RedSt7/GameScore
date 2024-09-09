@@ -1,6 +1,6 @@
-package com.sportradar.gamescore.gamescore.dao;
+package com.sportradar.gamescore.dao;
 
-import com.sportradar.gamescore.gamescore.entities.Match;
+import com.sportradar.gamescore.entities.Match;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,8 +60,36 @@ public class MatchDAOTest {
     }
 
     @Test
+    void update(){
+        Match match = new Match("Olympiakos", "Panathinaikos");
+        matchDao.add(match);
+        matchDao.update(match.getId(), 5,4);
+
+        assertEquals(5, match.getScoreA());
+        assertEquals(4, match.getScoreB());
+        assertEquals(match, matchDao.findAllSorted().get(0));
+    }
+
+    @Test
+    void findAll(){
+        Match match = new Match("Olympiakos", "Panathinaikos");
+        matchDao.add(match);
+
+        assertEquals(1, matchDao.findAll().size());
+
+        Match match2 = new Match("Olympiakos", "AEK");
+        matchDao.add(match2);
+
+        assertEquals(2, matchDao.findAll().size());
+    }
+
+    @Test
     void findSorted(){
         //total score 3
+        Match match1 = new Match("Olympiakos", "PAOK");
+        match1.setScoreA(2);
+        match1.setScoreB(1);
+        matchDao.add(match1);
         //total score 5
         Match match2 = new Match("Olympiakos", "Panathinaikos");
         match2.setScoreA(5);
@@ -72,10 +100,6 @@ public class MatchDAOTest {
         match3.setScoreA(3);
         match3.setScoreB(1);
         matchDao.add(match3);
-        Match match1 = new Match("Olympiakos", "PAOK");
-        match1.setScoreA(2);
-        match1.setScoreB(1);
-        matchDao.add(match1);
 
         assertEquals(match2, matchDao.findAllSorted().get(0));
         assertEquals(match3, matchDao.findAllSorted().get(1));

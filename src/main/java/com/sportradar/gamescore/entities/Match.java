@@ -1,4 +1,4 @@
-package com.sportradar.gamescore.gamescore.entities;
+package com.sportradar.gamescore.entities;
 
 public class Match {
 
